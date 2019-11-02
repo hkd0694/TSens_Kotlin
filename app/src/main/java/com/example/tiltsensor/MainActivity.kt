@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(),SensorEventListener {
         tiltView.onSensorEvent(event)
     }
 
-    private val sensorManager by lazy{
+    private val sensorManager by lazy {
         getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
