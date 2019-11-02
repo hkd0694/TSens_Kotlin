@@ -1,6 +1,7 @@
 package com.example.tiltsensor
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -8,13 +9,26 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 
 class MainActivity : AppCompatActivity(),SensorEventListener {
 
+    private lateinit var tiltView: TiltView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //가로 방향 고정
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        //화면이 꺼지지 않게 하기.
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        super.onCreate(savedInstanceState)
+
+        tiltView = TiltView(this)
+        setContentView(tiltView)
+    }
 
     //센서 정밀도가 변겨오디면 호출된다.
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 
     //센서 값이 변경되면 호출된다.
@@ -26,15 +40,12 @@ class MainActivity : AppCompatActivity(),SensorEventListener {
         event?.let {
             Log.e("Start","OnSensorChanged x : + ${event.values[0]}, y : ${event.values[1]}, z : ${event.values[2]}")
         }
+
+        tiltView.onSensorEvent(event)
     }
 
     private val sensorManager by lazy{
         getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
     }
 
     override fun onResume() {
@@ -51,8 +62,5 @@ class MainActivity : AppCompatActivity(),SensorEventListener {
         super.onPause()
         sensorManager.unregisterListener(this)
     }
-
-
-
 
 }
